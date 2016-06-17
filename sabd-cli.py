@@ -18,8 +18,8 @@ Options:
   -q <query>, --first-letter-search <query>     To do a first letter search
   -s <sabad_id>, --sabd <sabad_id>              To bring a specific sabd back
   -o, --output-as html|txt|md                   Output sabd as html|txt|md
-  --html-template line-by-line|presentation     If html then output as line-by-line[default] mode or presentation
   -h, --help                                    Show this screen
+  --template <template_name>					the name of the template you want to use
 '''
 
 import docopt
@@ -88,14 +88,13 @@ def main():
             elif args['--output-as'] == 'md':
                 bootstrap.logger.warn("md output no yet implemented")
             else:  # default is presentation mode html
-                html_mode = 'presentation'
-                if args['--html-template']:
-                    if args['--html-template'].strip() == 'line-by-line':
-                        html_mode = 'line-by-line'
+                templateName = 'presentation'
+                if args['--template']:
+                    templateName=args['--template'].strip()
 
                 output_file = tempfile.NamedTemporaryFile(mode='w+b', buffering=-1, encoding=None, newline=None, suffix='.html', prefix='sabd-cli-', dir=None, delete=False)
                 bootstrap.logger.info('output filename has not been specified, will write to ' + str(output_file.name))
-                outputSabadAsFile(output_file, 'html', data, html_mode)
+                outputSabadAsFile(output_file, 'html', data, templateName)
 
         else:
             bootstrap.logger.warn("couldn't find a sabad by " + str(sabd_id))
@@ -121,7 +120,7 @@ def outputSabadAsFile(file, type, data, html_template_type='line-by-line'):
     if type == 'html':
         # use jinja templates
         env = Environment(loader=PackageLoader('application', 'views'))
-        template = env.get_template(html_template_type + '.html')
+        template = env.get_template(html_template_type)
         template_data = {'title': 'Sabad CLI output [' + html_template_type + ']', 'gurbani': data}
         output = template.render(template_data)
         file.write(output.encode("UTF-8"))
