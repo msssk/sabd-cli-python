@@ -30,7 +30,8 @@ from jinja2 import Environment, PackageLoader
 import webbrowser
 
 import application.bootstrap as bootstrap
-from application.models.IsgGurbaniDb import IsgGurbaniDb
+#from application.models.IsgGurbaniDb import IsgGurbaniDb
+from application.models.ShabadOSDb import ShabadOSDb
 
 
 def main():
@@ -41,7 +42,8 @@ def main():
         bootstrap.logger.info("we don't support that file format yet")
         quit()
 
-    model_gurbani = IsgGurbaniDb(bootstrap.config)
+    #model_gurbani = IsgGurbaniDb(bootstrap.config)
+    model_gurbani = ShabadOSDb(bootstrap.config)
     if args['--first-letter-search']:
         query = args['--first-letter-search'].strip()
         bootstrap.logger.info("Doing Gurmukhi first letter search with " + query)

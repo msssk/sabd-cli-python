@@ -2,9 +2,9 @@ import sqlite3
 import os.path
 
 
-class IsgGurbaniDb:
+class ShabadOSDb:
     '''
-    to model the http://searchgurbani.com/sgdv/isg sqllite db
+    to model the http://shabados.org sqllite db
     '''
     _config = None
     _connection = None
@@ -17,7 +17,7 @@ class IsgGurbaniDb:
 
         # don't try catch as we actually want to throw if there's an issue
         db_path = os.path.join(self._config.get('production', 'APPLICATION_PATH'),
-                               self._config.get('production', 'db.isg.path'))
+                               self._config.get('production', 'db.shabados.path'))
 
         self._connection = sqlite3.connect(db_path)
 
@@ -33,7 +33,7 @@ class IsgGurbaniDb:
             raise TypeError('no search string passed in')
 
         cursor = self._connection.cursor()
-        query = "select ID,shabd,roman from gurbani where gamma like ? order by ID,page,line"
+        query = "select Verse.ID,Shabad.ShabadID,Verse.Transliteration from Verse join Shabad on Shabad.VerseID = Verse.ID where Verse.FirstLetterEng like ? order by Verse.ID"
         cursor.execute(query, [input + '%'])
         data = cursor.fetchall()
         cursor.close()
@@ -50,7 +50,7 @@ class IsgGurbaniDb:
             raise TypeError('no sabad_id passed in')
 
         cursor = self._connection.cursor()
-        query = "select ID,page,scrpt,line,shabd,gurmukhi,roman,english from gurbani where shabd=? order by ID,page,line"
+        query = "select Verse.ID,Verse.PageNo,Verse.SourceID,Verse.LineNo,Verse.RaagID,Verse.Gurmukhi,Verse.Transliteration,Verse.English from Verse join Shabad on Verse.ID = Shabad.VerseID where Shabad.ShabadID like ?"
         cursor.execute(query, [sabad_id])
         data = cursor.fetchall()
         cursor.close()

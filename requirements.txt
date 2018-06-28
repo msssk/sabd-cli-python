@@ -3,5 +3,3 @@ docopt # compand line arg magic
 #sqlite3
 nose # for unit testing
 Jinja2 # for html output templating
-
-
